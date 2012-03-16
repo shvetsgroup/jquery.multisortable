@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="../lib/jquery.multisortable.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			jQuery(function($){
+				$('ul.sortable').multisortable();
+				$('ul#list1').sortable('option', 'connectWith', 'ul#list2');
+				$('ul#list2').sortable('option', 'connectWith', 'ul#list1');
+			});
+		</script>
+		
+		<style type="text/css">
+			li.selected { border: 1px solid red; }
+			li.child { margin-left: 20px; }
+		</style>
+	</head>
+	<body>
+		<h1>jquery.multisortable.js</h1>
+		
+		<h2>List 1</h2>
+		<ul id="list1" class="sortable">
+			<li>Item 11</li>
+			<li>Item 12</li>
+			<li class="child">Item 12a</li>
+			<li class="child">Item 12b</li>
+			<li>Item 13</li>
+			<li>Item 14</li>
+			<li>Item 15</li>
+		</ul>
+		
+		<h2>List 2</h2>
+		<ul id="list2" class="sortable">
+			<li>Item 21</li>
+			<li>Item 22</li>
+			<li class="child">Item 22a</li>
+			<li>Item 23</li>
+			<li>Item 24</li>
+			<li class="child">Item 24a</li>
+		</ul>
+	</body>
+</html>
