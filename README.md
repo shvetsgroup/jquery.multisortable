@@ -1,4 +1,4 @@
-# jquery.multisortable.js
+# jquery.multisortable
 ### <https://github.com/iamvery/jquery.multisortable>
 
 ---
