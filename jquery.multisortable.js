@@ -1,7 +1,9 @@
-//Author: Ethan Atlakson
-//Last Revision 10/8/2010
-//multi-selectable, multi-sortable jQuery plugin
-//jquery.multisortable.js
+/*
+ * Author: Ethan Atlakson, Jay Hayes
+ * Last Revision 3/15/2012
+ * multi-selectable, multi-sortable jQuery plugin
+ * jquery.multisortable.js
+*/
 jQuery.fn.multiselectable = function(options) {
     if (!options) { options = {}; }
     options = jQuery.extend({
