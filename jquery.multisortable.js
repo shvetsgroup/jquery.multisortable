@@ -53,10 +53,31 @@ jQuery.fn.multisortable = function(options) {
         start: function(event, ui) { },
         stop: function(event, ui) { },
         sort: function(event, ui) { },
+        receive: function(event, ui) { },
 		selectedClass: 'selected',
         click: function(event, elem) { },
 		placeholder: 'placeholder'
     }, options);
+
+    function regroup(item, list) {
+        if (jQuery('.' + settings.selectedClass, list).length > 0) {
+            var myIndex = item.data('i');
+
+            var itemsBefore =  jQuery('.' + settings.selectedClass, list).filter(function() {
+                                  return jQuery(this).data('i') < myIndex;
+                               }).css('position', '').css('width', '');
+            item.before(itemsBefore);
+
+            var itemsAfter =  jQuery('.' + settings.selectedClass, list).filter(function() {
+                                  return jQuery(this).data('i') > myIndex;
+                              }).css('position', '').css('width', '');
+            item.after(itemsAfter);
+
+            setTimeout(function(){
+                itemsAfter.add(itemsBefore).addClass(settings.selectedClass);
+            }, 0);
+        }
+    }
 
     return this.each(function() {
         var t = jQuery(this);
@@ -84,24 +105,7 @@ jQuery.fn.multisortable = function(options) {
         };
 
         options.stop = function(event, ui) {
-            var parent = ui.item.parent();
-            if (jQuery('.' + settings.selectedClass, parent).length > 1) {
-                var myIndex = ui.item.data('i');
-
-                var itemsBefore =  jQuery('.' + settings.selectedClass, parent).filter(function() {
-                                        return jQuery(this).data('i') < myIndex;
-                                    }).css('position', '');
-                ui.item.before(itemsBefore);
-
-                var itemsAfter =  jQuery('.' + settings.selectedClass, parent).filter(function() {
-                                        return jQuery(this).data('i') > myIndex;
-                                    }).css('position', '');
-                ui.item.after(itemsAfter);
-
-                setTimeout(function(){
-                        itemsAfter.add(itemsBefore).addClass(settings.selectedClass);
-                    }, 0);
-            }
+            regroup(ui.item, ui.item.parent());
             settings.stop(event, ui);
         };
 
@@ -140,8 +144,15 @@ jQuery.fn.multisortable = function(options) {
 
                 h += jQuery(this).outerHeight();
             });
+
             settings.sort(event, ui);
         };
+
+        options.receive = function(event, ui) {
+            regroup(ui.item, ui.sender);
+            settings.receive(event, ui);
+        }
+
         jQuery(t).sortable(options).disableSelection();
     });
 };
