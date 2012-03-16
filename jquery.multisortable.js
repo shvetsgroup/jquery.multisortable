@@ -19,7 +19,16 @@ jQuery.fn.multiselectable = function(options) {
                 var myIndex = jQuery(parent.children()).index(jQuery(this));
                 var prevIndex = jQuery(parent.children()).index(jQuery('.multiselectable-previous', parent));
 
-                if (!e.ctrlKey) { jQuery('.' + options.selectedClass, parent).removeClass(options.selectedClass); }
+                if (!e.ctrlKey && !e.metaKey) {
+                    jQuery('.' + options.selectedClass, parent).removeClass(options.selectedClass);
+                } else {
+                    if (jQuery(this).not('.child').length) {
+                        if (jQuery(this).hasClass(options.selectedClass))
+                            jQuery(this).nextUntil(':not(.child)').removeClass(options.selectedClass);
+                        else
+                            jQuery(this).nextUntil(':not(.child)').addClass(options.selectedClass);
+                    }
+                }
                 if (e.shiftKey && prevIndex >= 0) {
                     jQuery('.multiselectable-previous', parent).toggleClass(options.selectedClass);
                     if (prevIndex < myIndex) {
