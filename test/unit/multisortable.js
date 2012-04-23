@@ -128,8 +128,13 @@ $(function(){
 		second.simulate('drag', { dx: 0, dy: 10})
 	})
 	
-	test('when received by a connected list, items shoudl be regrouped to their appropriate position "around" dragged item', function(){
+	test('when received by a connected list, items should be regrouped to their appropriate position "around" dragged item', function(){
 		ok(false, "missing test - I don't currently know a way to simulate a `receive` event")
+	})
+	
+	test('can make empty list multisortable', function(){
+		expect(0)
+		$('<ul></ul>').multisortable()
 	})
 	
 })
