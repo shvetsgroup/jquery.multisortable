@@ -75,14 +75,15 @@
                             
                         }).disableSelection();
                     }
-                })
+                });
             };
             $.fn.multiselectable.defaults = {
                 click: function(event, elem){},
                 selectedClass: 'selected'
             };
             $.fn.multisortable = function(options) {
-                var mySelectClass;
+                var mySelectClass,
+                    settings;
                 
                 options = options || {};
                 settings = $.extend({}, $.fn.multisortable.defaults, options);
@@ -99,23 +100,23 @@
                         };     
                             
                     if (selectedItems.length > 0) {
-                        myIndex = item.data('i'),
+                        myIndex = item.data('i');
         
                         itemsBefore = selectedItems.filter(function() {
                             return $(this).data('i') < myIndex;
-                        }).css(nullCSS)
+                        }).css(nullCSS);
                         
-                        item.before(itemsBefore)
+                        item.before(itemsBefore);
                         
                         itemsAfter = selectedItems.filter(function() {
                             return $(this).data('i') > myIndex;
-                        }).css(nullCSS)
+                        }).css(nullCSS);
                         
-                        item.after(itemsAfter)
+                        item.after(itemsAfter);
                         
                         setTimeout(function(){
-                            itemsAfter.add(itemsBefore).addClass(mySelectClass)
-                        }, 0)
+                            itemsAfter.add(itemsBefore).addClass(mySelectClass);
+                        }, 0);
                     }
                 }
                 
@@ -146,12 +147,12 @@
                         }
                         
                         settings.start(event, ui);
-                    }
+                    };
                     
                     options.stop = function(event, ui) {
                         regroup(ui.item, ui.item.parent());
                         settings.stop(event, ui);
-                    }
+                    };
                     
                     options.sort = function(event, ui) {
                         var ui_item = ui.item,
@@ -177,7 +178,7 @@
                             height += item.outerHeight();
                             newCSS.top = top - height;
                             item.css(newCSS);
-                        })
+                        });
                         
                         height = ui_item.outerHeight();
                         selectedItems.filter(function() {
@@ -187,18 +188,18 @@
                             newCSS.top = top + height;
                             item.css(newCSS);
                             height += item.outerHeight();
-                        })
+                        });
                         
                         settings.sort(event, ui);
-                    }
+                    };
                     
                     options.receive = function(event, ui) {
                         regroup(ui.item, ui.sender);
                         settings.receive(event, ui);
-                    }
+                    };
                     
                     list.sortable(options).disableSelection();
-                })
+                });
             };
             $.fn.multisortable.defaults = {
                 start: function(event, ui) { },
