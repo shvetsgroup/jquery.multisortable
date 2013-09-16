@@ -68,8 +68,6 @@
 					}
 				}
 			}
-
-			options.click(e, item);
 		}
 
 		return this.each(function() {
@@ -78,6 +76,7 @@
 			if (!list.data('multiselectable')) {
 				list.data('multiselectable', true)
 					.delegate(options.items, 'mousedown', handleSelection)
+					.delegate(options.items, 'click', function(e){ options.click(e, $(this)); })
 					.disableSelection();
 			}
 		})
