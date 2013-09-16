@@ -15,7 +15,7 @@
 		}
 		options = $.extend({}, $.fn.multiselectable.defaults, options);
 
-		function handleSelection(e) {
+		function mouseDown(e) {
 			var item = $(this),
 				parent = item.parent(),
 				myIndex = item.index();
@@ -70,13 +70,33 @@
 			}
 		}
 
+		function click(e) {
+			if ( $(this).is('.ui-draggable-dragging') ) {
+				return;
+			}
+
+			var item = $(this),	parent = item.parent();
+
+			// If item wasn't draged and is not multiselected, it should reset selection for other items.
+			if (!e.ctrlKey && !e.metaKey && !e.shiftKey) {
+				parent.find('.multiselectable-previous').removeClass('multiselectable-previous');
+				parent.find('.' + options.selectedClass).removeClass(options.selectedClass);
+				item.addClass(options.selectedClass).addClass('multiselectable-previous');
+				if (item.not('.child').length) {
+					item.nextUntil(':not(.child)').addClass(options.selectedClass);
+				}
+			}
+
+			options.click(e, $(this));
+		}
+
 		return this.each(function() {
 			var list = $(this);
 
 			if (!list.data('multiselectable')) {
 				list.data('multiselectable', true)
-					.delegate(options.items, 'mousedown', handleSelection)
-					.delegate(options.items, 'click', function(e){ options.click(e, $(this)); })
+					.delegate(options.items, 'mousedown', mouseDown)
+					.delegate(options.items, 'click', click)
 					.disableSelection();
 			}
 		})
