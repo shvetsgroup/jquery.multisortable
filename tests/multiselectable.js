@@ -3,7 +3,7 @@ $(function(){
 	module('multiselectable')
 	
 	/* helpers */
-	var list_str = '<ul><li></li><li></li><li></li></ul>'
+	var list_str = '<ul><li></li><li></li><li></li><li></li><li></li><li></li><li></li></ul>'
 	function getList(){ return $(list_str) }
 	function getMultiselectableList(){ return getList().multiselectable() }
 	function getMultiselectableListWithChildren(){
@@ -13,7 +13,7 @@ $(function(){
 	}
 	
 	function getClickEvent(parameters){
-		return $.extend(jQuery.Event('click'), parameters || {})
+		return $.extend(jQuery.Event('mousedown'), parameters || {})
 	}
 	function getShiftClickEvent(){
 		return getClickEvent({shiftKey: true})
@@ -45,14 +45,14 @@ $(function(){
 	})
 	
 	test('selected should have default selected class', function(){
-		var item = getMultiselectableList().find('li').first().click()
+		var item = getMultiselectableList().find('li').first().trigger('mousedown');
 		ok(item.hasClass($.fn.multiselectable.defaults.selectedClass), 'selected has default selected class')
 		// this is sort of in repetiion with the `isSelected` helper, but it feels right to explicitly test it
 	})
 	
 	test('selected should have custom selected class', function(){
 		var klass = 'grouped'
-		var item = getList().multiselectable({selectedClass: klass}).find('li').first().click()
+		var item = getList().multiselectable({selectedClass: klass}).find('li').first().trigger('mousedown');
 		ok(item.hasClass(klass), 'selected has custom selected class')
 	})
 	
@@ -60,27 +60,25 @@ $(function(){
 		expect(1)
 		getList().multiselectable({
 			click: function(){ ok(true, 'click triggered') }
-		}).find('li').first().click()
+		}).find('li').first().trigger('mousedown');
 	})
 	
-	test('data-multiselectable attribute should be set on all items', function(){
-		var items = getMultiselectableList().find('li')
+	test('data-multiselectable attribute should be set on items container', function(){
+		var items = getMultiselectableList()
 		expect(items.length)
-		items.each(function(){
-			ok($(this).data('multiselectable'), 'data-multiselectable attribute is truthy')
-		})
+		ok(items.data('multiselectable'), 'data-multiselectable attribute is set')
 	})
 	
 	test('should select unselected item when clicked with no modifiers', function(){
-		var item = getMultiselectableList().find('li').first().click()
+		var item = getMultiselectableList().find('li').first().trigger('mousedown');
 		ok(isSelected(item), 'item is selected')
 	})
 	
 	test('should unselect selected siblings when clicked with no modifiers', function(){
 		expect(2)
 		var list = getMultiselectableList()
-		var selected = list.find('li:last-child').click()
-		list.find('li').first().click()
+		var selected = list.find('li:last-child').trigger('mousedown')
+		list.find('li').first().trigger('mousedown')
 		
 		ok(list.find('li').length > 1, 'list has more than one child')
 		ok(!isSelected(selected), 'previously selected item is no longer selected')
@@ -91,31 +89,114 @@ $(function(){
 		var items = list.find('li')
 		expect(items.length)
 		
-		items.first().click()
+		items.first().trigger('mousedown')
 		items.last().trigger(getShiftClickEvent())
 		
 		items.each(function(){
 			ok(isSelected($(this)), 'all items selected')
 		})
 	})
-	
-	test('should selected unselected item only when clicked with shift modifier and there is no previous selection', function(){
+
+	// Abstracted test into function to keep tests DRY
+	function do_shift_select_range_ctrl_meta_click_test(e){
+		// We have to duplicate event for second click.
+		var e2 = jQuery.extend(true, {}, e);
+
+		var items = getMultiselectableList().find('li')
+		items.eq(0).trigger('mousedown')
+
+		items.eq(2).trigger(e)
+		items.eq(3).trigger(getShiftClickEvent())
+		
+		items.eq(5).trigger(e2)
+		items.eq(6).trigger(getShiftClickEvent())
+
+		ok(isSelected(items.eq(0)), '1 item is selected (click)')
+		ok(!isSelected(items.eq(1)), '2 item is not selected')
+		ok(isSelected(items.eq(2)), '3 item is selected (ctrl/meta)')
+		ok(isSelected(items.eq(3)), '4 item is selected (szhift)')
+		ok(!isSelected(items.eq(4)), '5 item is not selected')
+		ok(isSelected(items.eq(5)), '6 item is selected (ctrl/meta)')
+		ok(isSelected(items.eq(6)), '7 item is selected (shift)')
+	}
+
+	test('shift select range should start from last ctrl click', function(){
+		do_shift_select_range_ctrl_meta_click_test(getCtrlClickEvent())
+	})
+
+	test('shift select range should start from last meta click', function(){
+		do_shift_select_range_ctrl_meta_click_test(getMetaClickEvent())
+	})
+
+	test('should selected select all items when shift clicked last item and there is no previous selection', function(){
 		var list = getMultiselectableList()
 		var items = list.find('li')
-		var item = items.first().trigger(getShiftClickEvent())
+		items.last().trigger(getShiftClickEvent())
 		
 		expect(items.length)
 		
-		ok(isSelected(item), 'shift clicked item is selected')
-		
-		items.not(item).each(function(){
-			ok(!isSelected($(this)), 'other item is not selected')
+		items.each(function(){
+			ok(isSelected($(this)), 'all items are selected')
 		})
 	})
 	
-	test('should unselect last selected item only when clicked with shift modifier', function(){
+	test('shift selection range can be reduced on following shift select within the selected range', function(){
+		var list = getMultiselectableList()
+		var items = list.find('li')
+		
+		var first = items.eq(0).trigger('mousedown')
+		var third = items.eq(2).trigger(getShiftClickEvent())
+		var second = items.eq(1).trigger(getShiftClickEvent())
+
+		expect(items.length)
+		ok(isSelected(first), '1 item is selected')
+		ok(isSelected(second), '2 item is selected')
+
+		items.not(first).not(second).each(function(){
+			ok(!isSelected($(this)), 'all items are not selected')
+		})
+	})
+
+	test('shift selection range can be expanded on following shift select within the selected range', function(){
+		var list = getMultiselectableList()
+		var items = list.find('li')
+		
+		var first = items.eq(0).trigger('mousedown')
+		var third = items.eq(2).trigger(getShiftClickEvent())
+		var fourth = items.eq(3).trigger(getShiftClickEvent())
+
+		expect(items.length)
+		items.each(function(i){
+			if (i <= 3) {
+				ok(isSelected($(this)), (i + 1) + 'item is selected')
+			} else {
+				ok(!isSelected($(this)), 'all other items are not selected')
+			}
+		})
+	})
+
+	test('shift selection range can be reversed on following shift select above the selected range', function(){
+		var list = getMultiselectableList()
+		var items = list.find('li')
+		
+		var fourth = items.eq(3).trigger('mousedown')
+		var sixth = items.eq(5).trigger(getShiftClickEvent())
+		var first = items.eq(0).trigger(getShiftClickEvent())
+
+		expect(items.length)
+		items.each(function(i){
+			if (i <= 3) {
+				ok(isSelected($(this)), (i + 1) + 'item is selected')
+			} else {
+				ok(!isSelected($(this)), 'all other items are not selected')
+			}
+		})
+	})
+
+	// Abstracted test into function to keep tests DRY
+	function do_ctrl_meta_click_unselect_last_item_test(e){
 		var items = getMultiselectableList().find('li')
-		var first = items.first().click().trigger(getShiftClickEvent())
+		var first = items.first().trigger('mousedown').trigger(e)
 		var others = items.not(first)
 		
 		expect(others.length + 1)
@@ -123,15 +204,23 @@ $(function(){
 		others.each(function(){
 			ok(!isSelected($(this)), 'item is not selected')
 		})
+	}
+
+	test('should unselect last selected item only when clicked with ctrl modifier', function(){
+		do_ctrl_meta_click_unselect_last_item_test(getCtrlClickEvent())
 	})
-	
+
+	test('should unselect last selected item only when clicked with ctrl modifier', function(){
+		do_ctrl_meta_click_unselect_last_item_test(getMetaClickEvent())
+	})
+
 	// Abstracted test into function to keep tests DRY
 	function do_ctrl_meta_click_unselected_test(e){
 		expect(2)
 		
 		var list = getMultiselectableList()
 		var items = list.find('li')
-		var first = items.first().click()
+		var first = items.first().trigger('mousedown')
 		var last = items.last().trigger(e)
 		
 		ok(isSelected(first), 'first item is selected')
@@ -152,7 +241,7 @@ $(function(){
 		
 		var list = getMultiselectableList()
 		var items = list.find('li')
-		var first = items.first().click()
+		var first = items.first().trigger('mousedown')
 		var last = items.last().trigger(e).trigger(e)
 		
 		ok(isSelected(first), 'first item is selected')
