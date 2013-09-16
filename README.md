@@ -1,4 +1,4 @@
-# jquery.multisortable
+# jquery.multisortable [![Build Status](https://travis-ci.org/shvetsgroup/jquery.multisortable.png)](https://travis-ci.org/shvetsgroup/jquery.multisortable)
 
 Extension of [jQuery UI Sortable](http://jqueryui.com/sortable/), which works with multiple selected elements.
 
