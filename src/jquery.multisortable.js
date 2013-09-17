@@ -68,6 +68,8 @@
 					}
 				}
 			}
+
+			options.mousedown(e, item);
 		}
 
 		function click(e) {
@@ -87,7 +89,7 @@
 				}
 			}
 
-			options.click(e, $(this));
+			options.click(e, item);
 		}
 
 		return this.each(function() {
@@ -103,8 +105,8 @@
 	};
 
 	$.fn.multiselectable.defaults = {
-		click: function(event, elem) {
-		},
+		click: function(event, elem) {},
+		mousedown: function(event, elem) {},
 		selectedClass: 'selected',
 		items: 'li'
 	};
@@ -157,7 +159,8 @@
 			list.multiselectable({
 				selectedClass: settings.selectedClass,
 				click: settings.click,
-				items: settings.items
+				items: settings.items,
+				mousedown: settings.mousedown
 			});
 
 			//enable sorting
@@ -192,11 +195,7 @@
 					left = parseInt(ui.item.css('left').replace('px', ''));
 
 				// fix to keep compatibility using prototype.js and jquery together
-				if (typeof []._reverse == 'undefined') {
-					$.fn.reverse = Array.prototype.reverse;
-				} else {
-					$.fn.reverse = Array.prototype._reverse;
-				}
+				$.fn.reverse = Array.prototype._reverse || Array.prototype.reverse
 
 				var height = 0;
 				$('.' + settings.selectedClass, parent).filter(function() {
@@ -241,16 +240,12 @@
 	};
 
 	$.fn.multisortable.defaults = {
-		start: function(event, ui) {
-		},
-		stop: function(event, ui) {
-		},
-		sort: function(event, ui) {
-		},
-		receive: function(event, ui) {
-		},
-		click: function(event, elem) {
-		},
+		start: function(event, ui) {},
+		stop: function(event, ui) {},
+		sort: function(event, ui) {},
+		receive: function(event, ui) {},
+		click: function(event, elem) {},
+		mousedown: function(event, elem) {},
 		selectedClass: 'selected',
 		placeholder: 'placeholder',
 		items: 'li'

@@ -55,7 +55,14 @@ $(function(){
 		var item = getList().multiselectable({selectedClass: klass}).find('li').first().trigger(getMouseDownEvent());
 		ok(item.hasClass(klass), 'selected has custom selected class')
 	})
-	
+
+	test('given mousedown callback should not be invoked on mousedown', function(){
+		expect(1)
+		getList().multiselectable({
+			mousedown: function(){ ok(true, 'mousedown triggered') }
+		}).find('li').first().trigger(getMouseDownEvent());
+	})
+
 	test('given click callback should not be invoked on mousedown', function(){
 		expect(0)
 		getList().multiselectable({

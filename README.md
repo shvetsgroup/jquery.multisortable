@@ -31,6 +31,7 @@ This plugin provides several new options and events:
 
 #### Events
 
+* **mousedown**: this event will be fired when user starts to drag an item.
 * **click**: this event will be fired when user clicks an item.
 
 ## Credits
