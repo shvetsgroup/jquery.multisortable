@@ -1,4 +1,4 @@
-# jquery.multisortable [![Build Status](https://travis-ci.org/shvetsgroup/jquery.multisortable.png)](https://travis-ci.org/shvetsgroup/jquery.multisortable)
+# jquery.multisortable [![Build Status](https://travis-ci.org/iamvery/jquery.multisortable.png)](https://travis-ci.org/iamvery/jquery.multisortable)
 
 Extension of [jQuery UI Sortable](http://jqueryui.com/sortable/), which works with multiple selected elements.
 
@@ -37,7 +37,5 @@ This plugin provides several new options and events:
 ## Credits
 
 Credit goes to original author of abandoned jquery.multisortable project which can be found at <http://multisortable.110mb.com>.
-
-Jay Hayes, who created a fork for that project on github <https://github.com/iamvery/jquery.multisortable>
 
 All other people, who contributed to the project.
