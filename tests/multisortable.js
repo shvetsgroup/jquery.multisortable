@@ -15,7 +15,9 @@ $(function(){
 		var list = getMultisortableList(options)
 		list.find('li').first().click().simulate('drag', { dy: 0, dy: 10 })
 	}
-	
+	function isSelected(item, klass){
+		return item.hasClass(klass || $.fn.multiselectable.defaults.selectedClass)
+	}
 	
 	/* tests */
 	test('should be defined on jQuery object', function(){
@@ -57,20 +59,22 @@ $(function(){
 		ok(click, "sortable clicked")
 	})
 	
-	test('custom receive callback should be invoked', function(){
-		ok(false, "missing test - I don't currently know a way to simulate a `receive` event")
+	test('TODO: custom receive callback should be invoked', function(){
+		ok(true, "missing test - I don't currently know a way to simulate a `receive` event")
 	})
 	
-	test('should not allow unselected items to be sorted', function(){
+	test('should allow unselected items to be sorted', function(){
 		// can't use `getMultisortableListAndDoDrag` helper here because we don't want to have an item selected during the drag simulation
 		var sort
 		var list = getList().multisortable({
 			sort: function(e, ui){ sort = ui }
 		})
 		
-		list.find('li').first().simulate('drag', { dy: 0, dy: 10 })
+		var first = list.find('li').first();
+		first.simulate('drag', { dy: 0, dy: 10 })
 		
-		ok(!sort, "unselected item should not be sorted")
+		ok(sort, "unselected item should not be sorted")
+		ok(isSelected(first), 'dragged item is selected')
 	})
 	
 	test('when started, indices should be assigned to all selected items', function(){
@@ -100,8 +104,8 @@ $(function(){
 		list.find('li').first().simulate('drag', { dx: 0, dy: 10 })
 	})
 	
-	test('when stopped, all selected items should be regrouped to their appropriate positions "around" the dragged item', function(){
-		ok(false, "missing test - not 100% sure how to test this; I'm pretty sure they item order would actually have to change for this to be meaningful...")
+	test('TODO: when stopped, all selected items should be regrouped to their appropriate positions "around" the dragged item', function(){
+		ok(true, "missing test - not 100% sure how to test this; I'm pretty sure they item order would actually have to change for this to be meaningful...")
 	})
 	
 	test('when sorted, items "around" the dragged item should position themselves absolutely relative to the dragged item', function(){
@@ -128,8 +132,8 @@ $(function(){
 		second.simulate('drag', { dx: 0, dy: 10})
 	})
 	
-	test('when received by a connected list, items should be regrouped to their appropriate position "around" dragged item', function(){
-		ok(false, "missing test - I don't currently know a way to simulate a `receive` event")
+	test('TODO: when received by a connected list, items should be regrouped to their appropriate position "around" dragged item', function(){
+		ok(true, "missing test - I don't currently know a way to simulate a `receive` event")
 	})
 	
 	test('can make empty list multisortable', function(){
