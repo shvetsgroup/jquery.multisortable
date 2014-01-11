@@ -167,24 +167,23 @@
 			options.cancel = settings.items + ':not(.' + settings.selectedClass + ')';
 			options.placeholder = settings.placeholder;
 			options.start = function(event, ui) {
-				if (ui.item.hasClass(settings.selectedClass)) {
-					var parent = ui.item.parent();
+				var parent = ui.item.parent();
 
-					//assign indexes to all selected items
-					parent.find('.' + settings.selectedClass).each(function(i) {
-						$(this).data('i', i);
-					});
+				//assign indexes to all selected items
+				ui.items = parent.find('.' + settings.selectedClass).each(function(i) {
+					$(this).data('i', i);
+				});
 
-					// adjust placeholder size to be size of items
-					var height = parent.find('.' + settings.selectedClass).length * ui.item.outerHeight();
-					ui.placeholder.height(height);
-				}
+				// adjust placeholder size to be size of items
+				var height = parent.find('.' + settings.selectedClass).length * ui.item.outerHeight(); // TODO: this line assumes that all the selected items are at the same height. fix it.
+				ui.placeholder.height(height);
 
 				settings.start.call(this, event, ui);
 			};
 
 			options.stop = function(event, ui) {
 				regroup(ui.item, ui.item.parent());
+				ui.items = ui.item.parent().find('.' + settings.selectedClass);
 				settings.stop.call(this, event, ui);
 			};
 
@@ -197,8 +196,9 @@
 				// fix to keep compatibility using prototype.js and jquery together
 				$.fn.reverse = Array.prototype._reverse || Array.prototype.reverse
 
+				ui.items = $('.' + settings.selectedClass, parent);
 				var height = 0;
-				$('.' + settings.selectedClass, parent).filter(function() {
+				ui.items.filter(function() {
 					return $(this).data('i') < myIndex;
 				}).reverse().each(function() {
 						height += $(this).outerHeight();
@@ -212,7 +212,7 @@
 					});
 
 				height = ui.item.outerHeight();
-				$('.' + settings.selectedClass, parent).filter(function() {
+				ui.items.filter(function() {
 					return $(this).data('i') > myIndex;
 				}).each(function() {
 						var item = $(this);
@@ -232,6 +232,7 @@
 
 			options.receive = function(event, ui) {
 				regroup(ui.item, ui.sender);
+				ui.items = ui.item.parent().find('.' + settings.selectedClass);
 				settings.receive.call(this, event, ui);
 			};
 
