@@ -12,8 +12,22 @@ $(function(){
 	function getMultisortableList(options){ return getList().multisortable(options) }
 	
 	function getMultisortableListAndDoDrag(options) {
-		var list = getMultisortableList(options)
-		list.find('li').first().click().simulate('drag', { dy: 0, dy: 10 })
+		var list = getMultisortableList(options),
+		item = list.find('li').first().click().simulate('drag', { dx: 0, dy: 10 })
+		
+		return {list: list, item: item};
+	}
+	
+	function getMultisortableListsAndDoDragFromOneToTheOther(options1, options2) {
+		var list1 = getMultisortableList($.extend(options1, {
+			connectWith: '#qunit-fixture ul',
+		})),
+		list2 = getMultisortableList($.extend(options2, {
+			connectWith: '#qunit-fixture ul',
+		})),
+		item = list1.find('li').first().click().simulate('drag', { dx: 0, dy: list2.offset().top - list1.offset().top });
+		
+		return {list1: list1, list2: list2, item: item};
 	}
 	function isSelected(item, klass){
 		return item.hasClass(klass || $.fn.multiselectable.defaults.selectedClass)
@@ -35,7 +49,7 @@ $(function(){
 	
 	test('should use custom placeholder class', function(){
 		var placeholder = 'the-place-that-holds'
-		var list = getMultisortableListAndDoDrag({
+		getMultisortableListAndDoDrag({
 			placeholder: placeholder,
 			start: function(e, ui){
 				ok(ui.placeholder.hasClass(placeholder), 'placeholder has custom class')
@@ -51,7 +65,7 @@ $(function(){
 			stop: 	 function(e, ui){ stop = ui },
 			sort: 	 function(e, ui){ sort = ui },
 			click: 	 function(e, ui){ click = ui }
-		})
+		});
 		
 		ok(start, "sortable started")
 		ok(stop, "sortable stopped")
@@ -59,8 +73,52 @@ $(function(){
 		ok(click, "sortable clicked")
 	})
 	
-	test('TODO: custom receive callback should be invoked', function(){
-		ok(true, "missing test - I don't currently know a way to simulate a `receive` event")
+	test('custom start, stop, sort, and receive callbacks should be invoked in the context of the selectable element', function(){
+		expect(3)
+		var start, stop, sort,
+		list = getMultisortableListAndDoDrag({
+			start: 	 function(e, ui){ start = this },
+			stop: 	 function(e, ui){ stop = this },
+			sort: 	 function(e, ui){ sort = this },
+		}).list;
+		
+		ok(start == list[0], "sortable started in the correct context")
+		ok(stop == list[0], "sortable stopped in the correct context")
+		ok(sort == list[0], "sortable sorted in the correct context")
+	})
+	
+	test('custom click and mousedown callbacks should be invoked in the context of the target element', function(){
+		expect(2)
+		var click, mousedown,
+		item = getMultisortableListAndDoDrag({
+			click: 	 function(e, ui){ click = this },
+			mousedown: 	 function(e, ui){ mousedown = this },
+		}).item;
+		
+		ok(click == item[0], "sortable clicked in the correct context")
+		ok(mousedown == item[0], "sortable mousedowned in the correct context")
+	})
+	
+	test('custom receive callback should be invoked', function(){
+		var receive
+		getMultisortableListsAndDoDragFromOneToTheOther({}, {
+			receive: function () {
+				receive = true;
+			}
+		})
+		
+		ok(receive, "sortable started")
+	})
+	
+	test('custom receive callback should be invoked in the context of the target list', function(){
+		var receive,
+		list2 = getMultisortableListsAndDoDragFromOneToTheOther({}, {
+			receive: function () {
+				receive = this;
+			}
+		}).list2
+		
+		ok(receive == list2[0], "sortable started")
 	})
 	
 	test('should allow unselected items to be sorted', function(){
