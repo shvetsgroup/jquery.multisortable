@@ -69,7 +69,7 @@
 				}
 			}
 
-			options.mousedown(e, item);
+			options.mousedown.call(this, e, item);
 		}
 
 		function click(e) {
@@ -89,7 +89,7 @@
 				}
 			}
 
-			options.click(e, item);
+			options.click.call(this, e, item);
 		}
 
 		return this.each(function() {
@@ -180,12 +180,12 @@
 					ui.placeholder.height(height);
 				}
 
-				settings.start(event, ui);
+				settings.start.call(this, event, ui);
 			};
 
 			options.stop = function(event, ui) {
 				regroup(ui.item, ui.item.parent());
-				settings.stop(event, ui);
+				settings.stop.call(this, event, ui);
 			};
 
 			options.sort = function(event, ui) {
@@ -227,12 +227,12 @@
 						height += item.outerHeight();
 					});
 
-				settings.sort(event, ui);
+				settings.sort.call(this, event, ui);
 			};
 
 			options.receive = function(event, ui) {
 				regroup(ui.item, ui.sender);
-				settings.receive(event, ui);
+				settings.receive.call(this, event, ui);
 			};
 
 			list.sortable(options).disableSelection();
