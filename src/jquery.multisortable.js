@@ -1,9 +1,9 @@
 /**
- * jquery.multisortable.js - v0.2
- * https://github.com/shvetsgroup/jquery.multisortable
+ * jquery.multisortable.js - v0.2.1
+ * https://github.com/pokop/jquery.multisortable
  *
- * Author: Ethan Atlakson, Jay Hayes, Gabriel Such, Alexander Shvets
- * Last Revision 3/16/2012
+ * Author: Ethan Atlakson, Jay Hayes, Gabriel Such, Alexander Shvets, Or Virnik
+ * Last Revision 1/24/2014
  * multi-selectable, multi-sortable jQuery plugin
  */
 
@@ -19,6 +19,11 @@
 			var item = $(this),
 				parent = item.parent(),
 				myIndex = item.index();
+			
+			// If the event's target doesn't pass the filter, ignore the event.
+			if ( options.filter && !$(e.target).is(item.find(options.filter)) ) {
+				return;
+			}
 
 			var prev = parent.find('.multiselectable-previous');
 			// If no previous selection found, start selecting from first selected item.
@@ -73,11 +78,17 @@
 		}
 
 		function click(e) {
-			if ( $(this).is('.ui-draggable-dragging') ) {
+			var item = $(this),	
+				  parent = item.parent();
+			
+			if ( item.is('.ui-draggable-dragging') ) {
 				return;
 			}
-
-			var item = $(this),	parent = item.parent();
+			
+			// If the event's target doesn't pass the filter, ignore the event.
+			if ( options.filter && !$(e.target).is(item.find(options.filter)) ) {
+				return;
+			}
 
 			// If item wasn't draged and is not multiselected, it should reset selection for other items.
 			if (!e.ctrlKey && !e.metaKey && !e.shiftKey) {
@@ -108,7 +119,8 @@
 		click: function(event, elem) {},
 		mousedown: function(event, elem) {},
 		selectedClass: 'selected',
-		items: 'li'
+		items: '>*',
+		filter: false,
 	};
 
 
@@ -160,11 +172,12 @@
 				selectedClass: settings.selectedClass,
 				click: settings.click,
 				items: settings.items,
+				filter: settings.filter,
 				mousedown: settings.mousedown
 			});
 
 			//enable sorting
-			options.cancel = settings.items + ':not(.' + settings.selectedClass + ')';
+			options.cancel = settings.items + ':not(.' + settings.selectedClass + ')'; // TODO: +':filter('+settings.filter+')';
 			options.placeholder = settings.placeholder;
 			options.start = function(event, ui) {
 				var parent = ui.item.parent();
@@ -249,7 +262,8 @@
 		mousedown: function(event, elem) {},
 		selectedClass: 'selected',
 		placeholder: 'placeholder',
-		items: 'li'
+		items: '>*',
+		filter: false,
 	};
 
 }(jQuery);
