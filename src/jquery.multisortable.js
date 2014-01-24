@@ -179,7 +179,6 @@
 			//enable sorting
 			options.cancel = settings.items + ':not(.' + settings.selectedClass + ')'
 			if (settings.cancel) {
-				debugger;
 				options.cancel += ',' + settings.cancel
 			}
 			options.placeholder = settings.placeholder;
