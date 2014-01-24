@@ -13,7 +13,7 @@
 				$('table.sortable').multisortable({
 					connectWith: 'table.sortable',
 					items: 'tr',
-					filter: '>:first-child'
+					cancel: 'td:not(:first-child)'
 				});
 			});
 		</script>

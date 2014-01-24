@@ -20,8 +20,8 @@
 				parent = item.parent(),
 				myIndex = item.index();
 			
-			// If the event's target doesn't pass the filter, ignore the event.
-			if ( options.filter && !$(e.target).is(item.find(options.filter)) ) {
+			// If the event's target doesn't pass the cancel-filter, ignore the event.
+			if ( options.cancel && $(e.target).is(options.cancel) ) {
 				return;
 			}
 
@@ -85,8 +85,8 @@
 				return;
 			}
 			
-			// If the event's target doesn't pass the filter, ignore the event.
-			if ( options.filter && !$(e.target).is(item.find(options.filter)) ) {
+			// If the event's target doesn't pass the cancel-filter, ignore the event.
+			if ( options.cancel && $(e.target).is(options.cancel) ) {
 				return;
 			}
 
@@ -120,7 +120,7 @@
 		mousedown: function(event, elem) {},
 		selectedClass: 'selected',
 		items: '>*',
-		filter: false,
+		cancel: false,
 	};
 
 
@@ -172,12 +172,16 @@
 				selectedClass: settings.selectedClass,
 				click: settings.click,
 				items: settings.items,
-				filter: settings.filter,
+				cancel: settings.cancel,
 				mousedown: settings.mousedown
 			});
 
 			//enable sorting
-			options.cancel = settings.items + ':not(.' + settings.selectedClass + ')'; // TODO: +':filter('+settings.filter+')';
+			options.cancel = settings.items + ':not(.' + settings.selectedClass + ')'
+			if (settings.cancel) {
+				debugger;
+				options.cancel += ',' + settings.cancel
+			}
 			options.placeholder = settings.placeholder;
 			options.start = function(event, ui) {
 				var parent = ui.item.parent();
@@ -263,7 +267,7 @@
 		selectedClass: 'selected',
 		placeholder: 'placeholder',
 		items: '>*',
-		filter: false,
+		cancel: false,
 	};
 
 }(jQuery);
