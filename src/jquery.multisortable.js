@@ -1,9 +1,9 @@
 /**
- * jquery.multisortable.js - v0.2
- * https://github.com/shvetsgroup/jquery.multisortable
+ * jquery.multisortable.js - v0.2.1
+ * https://github.com/pokop/jquery.multisortable
  *
- * Author: Ethan Atlakson, Jay Hayes, Gabriel Such, Alexander Shvets
- * Last Revision 3/16/2012
+ * Author: Ethan Atlakson, Jay Hayes, Gabriel Such, Alexander Shvets, Or Virnik
+ * Last Revision 1/24/2014
  * multi-selectable, multi-sortable jQuery plugin
  */
 
@@ -19,6 +19,11 @@
 			var item = $(this),
 				parent = item.parent(),
 				myIndex = item.index();
+			
+			// If the event's target doesn't pass the cancel-filter, ignore the event.
+			if ( options.cancel && $(e.target).is(options.cancel) ) {
+				return;
+			}
 
 			var prev = parent.find('.multiselectable-previous');
 			// If no previous selection found, start selecting from first selected item.
@@ -69,15 +74,21 @@
 				}
 			}
 
-			options.mousedown(e, item);
+			options.mousedown.call(this, e, item);
 		}
 
 		function click(e) {
-			if ( $(this).is('.ui-draggable-dragging') ) {
+			var item = $(this),	
+				  parent = item.parent();
+			
+			if ( item.is('.ui-draggable-dragging') ) {
 				return;
 			}
-
-			var item = $(this),	parent = item.parent();
+			
+			// If the event's target doesn't pass the cancel-filter, ignore the event.
+			if ( options.cancel && $(e.target).is(options.cancel) ) {
+				return;
+			}
 
 			// If item wasn't draged and is not multiselected, it should reset selection for other items.
 			if (!e.ctrlKey && !e.metaKey && !e.shiftKey) {
@@ -89,7 +100,7 @@
 				}
 			}
 
-			options.click(e, item);
+			options.click.call(this, e, item);
 		}
 
 		return this.each(function() {
@@ -108,7 +119,8 @@
 		click: function(event, elem) {},
 		mousedown: function(event, elem) {},
 		selectedClass: 'selected',
-		items: 'li'
+		items: '>*',
+		cancel: false,
 	};
 
 
@@ -160,32 +172,35 @@
 				selectedClass: settings.selectedClass,
 				click: settings.click,
 				items: settings.items,
+				cancel: settings.cancel,
 				mousedown: settings.mousedown
 			});
 
 			//enable sorting
-			options.cancel = settings.items + ':not(.' + settings.selectedClass + ')';
+			options.cancel = settings.items + ':not(.' + settings.selectedClass + ')'
+			if (settings.cancel) {
+				options.cancel += ',' + settings.cancel
+			}
 			options.placeholder = settings.placeholder;
 			options.start = function(event, ui) {
-				if (ui.item.hasClass(settings.selectedClass)) {
-					var parent = ui.item.parent();
+				var parent = ui.item.parent();
 
-					//assign indexes to all selected items
-					parent.find('.' + settings.selectedClass).each(function(i) {
-						$(this).data('i', i);
-					});
+				//assign indexes to all selected items
+				ui.items = parent.find('.' + settings.selectedClass).each(function(i) {
+					$(this).data('i', i);
+				});
 
-					// adjust placeholder size to be size of items
-					var height = parent.find('.' + settings.selectedClass).length * ui.item.outerHeight();
-					ui.placeholder.height(height);
-				}
+				// adjust placeholder size to be size of items
+				var height = parent.find('.' + settings.selectedClass).length * ui.item.outerHeight(); // TODO: this line assumes that all the selected items are at the same height. fix it.
+				ui.placeholder.height(height);
 
-				settings.start(event, ui);
+				settings.start.call(this, event, ui);
 			};
 
 			options.stop = function(event, ui) {
 				regroup(ui.item, ui.item.parent());
-				settings.stop(event, ui);
+				ui.items = ui.item.parent().find('.' + settings.selectedClass);
+				settings.stop.call(this, event, ui);
 			};
 
 			options.sort = function(event, ui) {
@@ -197,8 +212,9 @@
 				// fix to keep compatibility using prototype.js and jquery together
 				$.fn.reverse = Array.prototype._reverse || Array.prototype.reverse
 
+				ui.items = $('.' + settings.selectedClass, parent);
 				var height = 0;
-				$('.' + settings.selectedClass, parent).filter(function() {
+				ui.items.filter(function() {
 					return $(this).data('i') < myIndex;
 				}).reverse().each(function() {
 						height += $(this).outerHeight();
@@ -212,7 +228,7 @@
 					});
 
 				height = ui.item.outerHeight();
-				$('.' + settings.selectedClass, parent).filter(function() {
+				ui.items.filter(function() {
 					return $(this).data('i') > myIndex;
 				}).each(function() {
 						var item = $(this);
@@ -227,12 +243,13 @@
 						height += item.outerHeight();
 					});
 
-				settings.sort(event, ui);
+				settings.sort.call(this, event, ui);
 			};
 
 			options.receive = function(event, ui) {
 				regroup(ui.item, ui.sender);
-				settings.receive(event, ui);
+				ui.items = ui.item.parent().find('.' + settings.selectedClass);
+				settings.receive.call(this, event, ui);
 			};
 
 			list.sortable(options).disableSelection();
@@ -248,7 +265,8 @@
 		mousedown: function(event, elem) {},
 		selectedClass: 'selected',
 		placeholder: 'placeholder',
-		items: 'li'
+		items: '>*',
+		cancel: false,
 	};
 
 }(jQuery);
