@@ -16,7 +16,7 @@ $('ul').multisortable();
 $('div.container').multisortable({
 	items: "div.item",
 	selectedClass: "selected",
-	click: function(e){ console.log("I'm selected."); }
+	click: function(e){ console.log("I'm selected."); },
 	stop: function(e){ console.log("I've been sorted."); }
 });
 ```
