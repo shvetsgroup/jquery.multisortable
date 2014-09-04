@@ -164,8 +164,8 @@
 			});
 
 			//enable sorting
-			if (option.cancel) {
-				option.cancel += ', ';
+			if (options.cancel) {
+				options.cancel += ', ';
 			}
 			options.cancel = (options.cancel || '') + ' ' + settings.items + ':not(.' + settings.selectedClass + ')';
 			options.placeholder = settings.placeholder;
