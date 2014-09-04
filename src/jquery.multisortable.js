@@ -164,7 +164,10 @@
 			});
 
 			//enable sorting
-			options.cancel = settings.items + ':not(.' + settings.selectedClass + ')';
+			if (options.cancel) {
+				options.cancel += ', ';
+			}
+			options.cancel = (options.cancel || '') + ' ' + settings.items + ':not(.' + settings.selectedClass + ')';
 			options.placeholder = settings.placeholder;
 			options.start = function(event, ui) {
 				if (ui.item.hasClass(settings.selectedClass)) {
