@@ -27,16 +27,16 @@
 
 			if (e.ctrlKey || e.metaKey) {
 				if (item.hasClass(options.selectedClass)) {
-					item.removeClass(options.selectedClass).removeClass('multiselectable-previous')
-					if (item.not('.child').length) {
-						item.nextUntil(':not(.child)').removeClass(options.selectedClass);
+					item.removeClass(options.selectedClass).removeClass('multiselectable-previous');
+					if (item.not('.'+options.childClass).length) {
+						item.nextUntil(':not(.'+options.childClass+')').removeClass(options.selectedClass);
 					}
 				}
 				else {
 					parent.find('.multiselectable-previous').removeClass('multiselectable-previous');
-					item.addClass(options.selectedClass).addClass('multiselectable-previous')
-					if (item.not('.child').length) {
-						item.nextUntil(':not(.child)').addClass(options.selectedClass);
+					item.addClass(options.selectedClass).addClass('multiselectable-previous');
+					if (item.not('.'+options.childClass).length) {
+						item.nextUntil(':not(.'+options.childClass+')').addClass(options.selectedClass);
 					}
 				}
 			}
@@ -63,8 +63,8 @@
 				if (!item.hasClass(options.selectedClass)) {
 					parent.find('.' + options.selectedClass).removeClass(options.selectedClass);
 					item.addClass(options.selectedClass).addClass('multiselectable-previous');
-					if (item.not('.child').length) {
-						item.nextUntil(':not(.child)').addClass(options.selectedClass);
+					if (item.not('.'+options.childClass).length) {
+						item.nextUntil(':not(.'+options.childClass+')').addClass(options.selectedClass);
 					}
 				}
 			}
@@ -84,8 +84,8 @@
 				parent.find('.multiselectable-previous').removeClass('multiselectable-previous');
 				parent.find('.' + options.selectedClass).removeClass(options.selectedClass);
 				item.addClass(options.selectedClass).addClass('multiselectable-previous');
-				if (item.not('.child').length) {
-					item.nextUntil(':not(.child)').addClass(options.selectedClass);
+				if (item.not('.'+options.childClass).length) {
+					item.nextUntil(':not(.'+options.childClass+')').addClass(options.selectedClass);
 				}
 			}
 
@@ -107,6 +107,7 @@
 	$.fn.multiselectable.defaults = {
 		click: function(event, elem) {},
 		mousedown: function(event, elem) {},
+		childClass: 'child',
 		selectedClass: 'selected',
 		items: 'li'
 	};
@@ -157,6 +158,7 @@
 
 			//enable multi-selection
 			list.multiselectable({
+				childClass: settings.childClass,
 				selectedClass: settings.selectedClass,
 				click: settings.click,
 				items: settings.items,
@@ -195,7 +197,7 @@
 					left = parseInt(ui.item.css('left').replace('px', ''));
 
 				// fix to keep compatibility using prototype.js and jquery together
-				$.fn.reverse = Array.prototype._reverse || Array.prototype.reverse
+				$.fn.reverse = Array.prototype._reverse || Array.prototype.reverse;
 
 				var height = 0;
 				$('.' + settings.selectedClass, parent).filter(function() {
@@ -246,6 +248,7 @@
 		receive: function(event, ui) {},
 		click: function(event, elem) {},
 		mousedown: function(event, elem) {},
+		childClass: 'child',
 		selectedClass: 'selected',
 		placeholder: 'placeholder',
 		items: 'li'
