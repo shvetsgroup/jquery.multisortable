@@ -1,6 +1,6 @@
 /**
  * jquery.multisortable.js - v0.2
- * https://github.com/shvetsgroup/jquery.multisortable
+ * https://github.com/iamvery/jquery.multisortable
  *
  * Author: Ethan Atlakson, Jay Hayes, Gabriel Such, Alexander Shvets
  * Last Revision 3/16/2012
