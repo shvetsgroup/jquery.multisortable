@@ -52,6 +52,10 @@
 				else if (prevIndex > myIndex) {
 					shift_range = item.nextUntil('.multiselectable-previous').add(prev).add(item);
 				}
+				else {
+					return;
+				}
+
 				shift_range.addClass(options.selectedClass).addClass('multiselectable-shift');
 			}
 			else {
