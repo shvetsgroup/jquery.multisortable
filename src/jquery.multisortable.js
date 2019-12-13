@@ -1,6 +1,6 @@
 /**
- * jquery.multisortable.js - v0.2
- * https://github.com/shvetsgroup/jquery.multisortable
+ * jquery.multisortable.js - v0.3
+ * https://github.com/espaker/jquery.multisortable
  *
  * Author: Ethan Atlakson, Jay Hayes, Gabriel Such, Alexander Shvets
  * Last Revision 3/16/2012
@@ -47,10 +47,10 @@
 
 				var shift_range;
 				if (prevIndex < myIndex) {
-					shift_range = item.prevUntil('.multiselectable-previous').add(prev).add(item);
+					shift_range = item.prevUntil('.multiselectable-previous', ":not(.ui-state-disabled)").add(prev).add(item);
 				}
 				else if (prevIndex > myIndex) {
-					shift_range = item.nextUntil('.multiselectable-previous').add(prev).add(item);
+					shift_range = item.nextUntil('.multiselectable-previous', ":not(.ui-state-disabled)").add(prev).add(item);
 				}
 				shift_range.addClass(options.selectedClass).addClass('multiselectable-shift');
 			}

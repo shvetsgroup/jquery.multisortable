@@ -7,8 +7,8 @@
 		<script type="text/javascript">
 			jQuery(function($){
 				$('ul.sortable').multisortable();
-				$('ul#list1').sortable('option', 'connectWith', 'ul#list2');
-				$('ul#list2').sortable('option', 'connectWith', 'ul#list1');
+				$('ul#list1').sortable('option', 'connectWith', 'ul#list2', {cancel: "li:not(.ui-state-disabled)"});
+				$('ul#list2').sortable('option', 'connectWith', 'ul#list1', {cancel: "li:not(.ui-state-disabled)"});
 			});
 		</script>
 		
@@ -16,11 +16,12 @@
             li { margin: 2px 0; cursor: pointer; }
 			li.selected { outline: 1px solid red; }
 			li.child { margin-left: 20px; }
+			li.ui-state-disabled { pointer-events:none; opacity:0.6;}
 		</style>
 	</head>
 	<body>
 		<h1>jquery.multisortable.js</h1>
-		<p><a href="https://github.com/shvetsgroup/jquery.multisortable">https://github.com/shvetsgroup/jquery.multisortable</a></p>
+		<p><a href="https://github.com/shvetsgroup/jquery.multisortable">https://github.com/espaker/jquery.multisortable</a></p>
 		
 		<h2>List 1</h2>
 		<ul id="list1" class="sortable">
@@ -31,7 +32,7 @@
 			<li>Item 13</li>
 			<li>Item 14</li>
 			<li>Item 15</li>
-			<li>Item 16</li>
+			<li class="ui-state-disabled">Item 16</li>
 			<li>Item 17</li>
 			<li>Item 18</li>
 			<li>Item 19</li>
